@@ -1,2 +1,2 @@
-# BayesianOptimalPrediction
-Implementation of numerical procedures in Bayesian Optimal Prediction
+# Bayesian Optimal Prediction
+Implementation of numerical procedures in Bayesian Optimal Prediction.
