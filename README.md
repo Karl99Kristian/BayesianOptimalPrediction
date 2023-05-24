@@ -16,7 +16,9 @@ When `calc_b=True` the file calculates $b$ iteratively in
 \end{aligned}
 $$ -->
 $$
-    \int_0^\infty M(T,y)p(1-t;b(t),y)dy=M(t,b(t))+\int_0^{T-t} \int_{b(t+s)}^\infty \overline{M}(t+s,y)p(s;b(t),y)dyds\\
+    \int_0^\infty M(T,y)p(1-t;b(t),y)dy=M(t,b(t))+\int_0^{T-t} \int_{b(t+s)}^\infty \overline{M}(t+s,y)p(s;b(t),y)dyds
+$$
+$$
     -\int_0^{T-t} \int_0^{b(t+s)} L(t+s,y)p(s;b(t),y)dyds
 $$ 
 where $p(s,x,y)$ is the transition density of a Brownian motion reflected in $0$. 
@@ -32,7 +34,9 @@ When `calc_v=True` then the file calculates $V$ in
 $$ -->
 $$
 W_*(t,x) = \int_0^\infty M(T,y)p(1-t;b(t),y)dy
-    -\int_0^{T-t} \int_{b(t+s)}^\infty \overline{M}(t+s,y)p(s;b(t),y)dyds\\
+    -\int_0^{T-t} \int_{b(t+s)}^\infty \overline{M}(t+s,y)p(s;b(t),y)dyds
+$$
+$$
     +\int_0^{T-t} \int_0^{b(t+s)} L(t+s,y)p(s;b(t),y)dyds
 $$
 as described in Appendix A.1 in [1].
