@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 
 
 #### Options
-identifyer = "_test2"   # Identifyer for file names
+identifyer = ""   # Identifyer for file names
 # np.random.seed(2023)  # Set a seed  
 
 # Variance reduction flags
@@ -28,7 +28,7 @@ rf = "wl"   # Name of loss function: Literal["wl","ent"]
 c = 1       # Loss function parameter
 
 #Accuracy
-accuracy = True # Test different variance reductions
+accuracy = False # Test different variance reductions
 
 
 # Functions
@@ -171,7 +171,7 @@ if __name__ == "__main__":
         ax.set_xlabel(r"$\theta$")
         ax.legend(loc='upper center')
 
-        fig.savefig(DIR_PLOTS.joinpath(f"Admis_MC_{rf}_{c}{identifyer}.png"))
+        fig.savefig(DIR_PLOTS.joinpath(f"Admis_MC_{rf}_{c}{identifyer}.pdf"))
 
     if accuracy:
         fig,ax = plt.subplots(ncols=2)

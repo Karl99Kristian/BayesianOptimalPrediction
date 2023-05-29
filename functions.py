@@ -12,7 +12,7 @@ def posterior_process(t,x):
 
 class Os_problem():
     """Class to store defining functions of the particular Optimal stopping problem"""
-    def __init__(self,loss:Literal["LINEX","Mixed_analytic", "Mixed"]) -> None:
+    def __init__(self,loss:Literal["LINEX","Mixed_analytic", "MIXED", "ALT"]) -> None:
         self.loss = loss
 
     def mayer(self,t,x,a):
@@ -20,38 +20,48 @@ class Os_problem():
             return np.exp(a*x)*posterior_process(t,x)+2*np.exp((a**2)*(1-t)/2)*(1-norm.cdf((x-a*(1-t))/np.sqrt(1-t)))
         elif self.loss == "Mixed_analytic":
             return (1-t)*(1-posterior_process(t,x))
-        elif self.loss == "Mixed":
+        elif self.loss == "MIXED":
             return 1-posterior_process(t,x)
+        elif self.loss == "ALT":
+            return x-a*x**2
 
     def inf_gen_mayer(self,t,x,a):
         if self.loss == "LINEX":
             return a**2/2*(np.exp(a*x)*posterior_process(t,x)-2*np.exp((a**2)*(1-t)/2)*(1-norm.cdf((x-a*(1-t))/np.sqrt(1-t))))
         elif self.loss == "Mixed_analytic":
             return posterior_process(t,x)-1
-        elif self.loss == "Mixed":
+        elif self.loss == "MIXED":
             return 0
+        elif self.loss == "ALT":
+            return -a
         
     def lagrange(self,t,x,a):
         if self.loss == "LINEX":
             return 0
         elif self.loss == "Mixed_analytic":
             return a*posterior_process(t,x)
-        elif self.loss == "Mixed":
+        elif self.loss == "MIXED":
             return a*posterior_process(t,x)
+        elif self.loss == "ALT":
+            return 0
 
     def mayer_at_mat(self,a,x):
         if self.loss == "LINEX":
             return  np.exp(a*x)
         elif self.loss == "Mixed_analytic":
             return 0
-        elif self.loss == "Mixed":
+        elif self.loss == "MIXED":
             return 0
+        elif self.loss == "ALT":
+            return x-a*x**2
 
     def inf_gen_mayer_at_mat(self,a,x):
         if self.loss == "LINEX":
             return a**2/2*np.exp(a*x)
         elif self.loss == "Mixed_analytic":
             return -1
-        elif self.loss == "Mixed":
+        elif self.loss == "MIXED":
             return 0
+        elif self.loss == "ALT":
+            return -a
     

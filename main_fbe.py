@@ -12,29 +12,31 @@ from matplotlib import pyplot as plt
 
 
 # Flags
-calc_b = True # Calculate boundary or take from file
-calc_v = False # Calculate value function or plot boundary function
+calc_b = False # Calculate boundary or take from file
+calc_v = True # Calculate value function or plot boundary function
 
 
 # Model parameters
-loss_name = "Mixed" # Name of loss function: Literal["LINEX","Mixed_analytic", "Mixed"]
-a_params = [1]      # Loss function parameter
+loss_name = "ALT" # Name of loss function: Literal["LINEX","Mixed_analytic", "MIXED", "ALT"]
+a_params = [0.25]#[0.1,0.25,0.5,1,2]      # Loss function parameter
 
 # Grid parameters
-dt_inv = 30             # number of time steps
+dt_inv = 200             # number of time steps
 dx_inv = 50             # number of space steps in value calc
-x_max = 1.5             # Upper limit for value plot
+x_max = 1/(2*0.25)              # Upper limit for value plot
 
 
 # Other options
-lgnd_title = r"$\alpha$"    # Title in legend
-identifyer = "_test1"       # Identifyer for file names
-plot_squared = True         # Plot boundary from squared OP problem
+lgnd_title = r"$c$"    # Title in legend
+identifyer = "_bound"       # Identifyer for file names
+plot_squared = False         # Plot boundary from squared OP problem
 non_unif = False            # Non-uniform grid
 verbose = True              # Print thourgh loop
 initial_point = 0           # B(1)
 plot_max = False            # Plot the numerical max i b
-newton_start_offset = 0     # offset from prevous guess in newton-raphson
+plot_inf = True             # Plot boundary in inf problem
+plot_inf_ylim = 2.5         # y upper bound if plot_inf true
+newton_start_offset = 0.1     # offset from prevous guess in newton-raphson
 infinity = 10               # Bound of integrals to avoid overflow
 
 # Functions
@@ -79,13 +81,13 @@ def calc_value(t,x, bt, bs,ts,a, osprob:Os_problem):
     if t==1 or x>=bt:
         return osprob.mayer(t,x,a) 
     
-    term1 = quad(lambda y: np.exp(a*y)*trans_dens(1-t,x,y),0,infinity)[0]
+    term1 = quad(lambda y: osprob.mayer_at_mat(a,y)*trans_dens(1-t,x,y),0,infinity)[0]
     
     # Trapezoidal backwards from s=1-t
     ints1 = np.zeros_like(bs)
     ints2 = np.zeros_like(bs)
 
-    ints1[0] = quad(lambda y: osprob.inf_gen_mayer_at_mat(a,x)*trans_dens(1-t,x,y),0,infinity)[0]
+    ints1[0] = quad(lambda y: osprob.inf_gen_mayer_at_mat(a,y)*trans_dens(1-t,x,y),0,infinity)[0]
     ints2[0] = 0
     for i, b in enumerate(bs[1:-1]):
         ints1[i+1] = quad(lambda y: osprob.inf_gen_mayer(ts[i+1],y,a)*trans_dens(ts[i+1]-t,x,y),b,infinity)[0]
@@ -149,17 +151,21 @@ if __name__=="__main__":
             ax.plot(trng,b_res, label=f"b(t), numt={dt_inv}(equidistant)")
             ax.scatter(trng,np.zeros_like(trng)-0.1,marker="x")
             if plot_max:
-                print("Hej")
                 maxidx = np.where(b_res==np.max(b_res))
                 ax.scatter([trng[maxidx]],[b_res[maxidx]],color=cmap(j))
             
-            fig.savefig(DIR_PLOTS.joinpath(f"{loss_name}_{a}_{len(trng)}{identifyer}.png"))
+            fig.savefig(DIR_PLOTS.joinpath(f"{loss_name}_{a}_{len(trng)}{identifyer}.pdf"))
         elif not calc_v:
             ax.plot(trng,b_res, label=f"{a}", color=cmap(j))
             # ax.plot(trng,b_res[-1]*np.sqrt(1-trng), color=cmap(j), alpha=0.25)
             if plot_squared:
                 ax.plot(trng,z_x_sqr*np.sqrt(1-trng), color="black",linestyle="dashed", alpha=0.25)
-
+            if plot_max:
+                maxidx = np.where(b_res==np.max(b_res))
+                ax.scatter([trng[maxidx]],[b_res[maxidx]],color=cmap(j))
+            if plot_inf:
+                ax.plot(trng,1/(2*a)*np.ones_like(trng), color=cmap(j),linestyle="dashed", alpha=0.5)
+                ax.set_ylim(0,plot_inf_ylim)
         
         if calc_v: 
             fig,ax = plt.subplots()  
@@ -167,7 +173,7 @@ if __name__=="__main__":
             value = np.zeros_like(xrng)
 
             # To reduce computation take only some of the points from b and t
-            factor = 10
+            factor = 2
             b_res = b_res[0::factor]
             trng = trng[0::factor]
 
@@ -186,7 +192,7 @@ if __name__=="__main__":
             ax.set_yticklabels([r"$W_*(0)$"])
             fig.suptitle("Value function")
             
-            fig.savefig(DIR_PLOTS.joinpath(f"{loss_name}_value_{a}{identifyer}.png"))
+            fig.savefig(DIR_PLOTS.joinpath(f"{loss_name}_value_{a}{identifyer}.pdf"))
             print(f"a={a},val={value[0]}, c_*={np.log(value[0])/a}, b0={b_res[-1]}")
 
     if not (calc_b or calc_v):
@@ -194,4 +200,4 @@ if __name__=="__main__":
         ax.set_ylabel(r"$b(t)$")
         ax.set_xlabel(r"$t$")
         plt.suptitle("Numerical boundary function")
-        fig.savefig(DIR_PLOTS.joinpath(f"{loss_name}_together{identifyer}.png"))
+        fig.savefig(DIR_PLOTS.joinpath(f"{loss_name}_together{identifyer}.pdf"))

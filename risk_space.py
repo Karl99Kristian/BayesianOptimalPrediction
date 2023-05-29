@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 
 
 #### Options
-identifyer = "_test2"   # Identifyer for file names
+identifyer = ""   # Identifyer for file names
 # np.random.seed(2023)  # Set a seed    
 
 # Variance reduction
@@ -205,5 +205,5 @@ if __name__ == "__main__":
 
     fig.suptitle(rf"Risk in {rf} $\alpha=${alpha}, {title_params}")
     # plt.show()
-    fig.savefig(DIR_PLOTS.joinpath(f"Admis_MC_{rf}_{alpha}_space_{compare}_{title}{identifyer}.png"))
+    fig.savefig(DIR_PLOTS.joinpath(f"Admis_MC_{rf}_{alpha}_space_{compare}_{title}{identifyer}.pdf"))
 
